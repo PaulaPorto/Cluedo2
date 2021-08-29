@@ -1,0 +1,66 @@
+class Player{
+  
+  String getPlayerStatus(){
+    return playerStatus();
+  }
+  String getDescription(){
+    return "You are in: " + roomStatus();
+  }
+  
+  void rollDice(){}
+  
+  void move(){}
+  
+  void makeSuggestion(){}
+  
+  void makeAccusation(){}
+  
+  Boolean eliminated(){}
+  
+  Boolean correctAccusation(){ return correctAccusation; }
+  
+  Boolean inRoom(Boolean inRoom){ return inRoom; }
+  
+  PlayerState{
+    
+    StartTurn{
+      entry / { rollDice(); }
+      
+      [makeAccusation()] accuse -> Accusing;
+      [inRoom()] go -> InRoom;
+      [!inRoom()] end -> EndTurn;
+    }
+    
+    Accusing{
+        [!correctAccusation()] elim -> Eliminated;
+        [correctAccusation()] gameWin -> GameOver;
+      }
+    
+    InRoom{
+      
+      Suggesting{
+        [suggestionMade()] sug -> EndTurn;
+      }
+      
+    }
+    
+    Eliminated{
+      String playerStatus() { return "YOU LOST!!"; }
+    }
+    
+    GameOver{
+      String playerStatus() { return player + playerToken + " has WON!"; }
+    }
+    
+    EndTurn{
+      entry / { goNextPlayer(); }
+    }
+    
+  }//end of state
+  
+  //main method
+  public static void main(String[] args){
+    player.makeAccusation();
+  }
+  
+}//end of class
